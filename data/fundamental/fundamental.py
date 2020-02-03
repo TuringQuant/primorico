@@ -23,7 +23,7 @@ class Fundamentus:
         for ticker in self.tickers:
             
             print(f'Requisitando dados {ticker} ...')
-            
+
             try:
                 url = self.base_url + ticker
                 response = requests.get(url)
@@ -47,26 +47,25 @@ class Fundamentus:
 
     @staticmethod
     def fix(json, tickers):
-        lista = []
+        aux_list = []
         for ticker_data, ticker in zip(json, tickers):
-            new_dict = {}    
+            aux_dict = {}    
             for key in ticker_data:
                 string = ticker_data[key]
-                is_percentage = True if '%' in string else False
-                replaced_string = string.replace(',','.').replace('%', '').replace('\n', '')
-                if replaced_string:
-                    if is_percentage:
-                        new_dict[key] =  float(replaced_string) / 100
-                    else:
-                        new_dict[key] =  float(replaced_string)
-            new_dict['ticker'] = ticker
-            lista.append(new_dict)
-        return lista
-
-
-
-
-#dados = Fundamental('WEGE3')
-#dados.get()
-#print(dados.data)
-
+                #is_percentage = True if '%' in string else False
+                replaced_string = string.replace(',','.').replace('\n', '')#.replace('%', '')
+                aux_dict[key] = replaced_string
+                #try:
+                #    if replaced_string:
+                #        if is_percentage:
+                #            aux_dict[key] =  float(replaced_string) / 100
+                #        else:
+                #            aux_dict[key] =  float(replaced_string)
+                #except:
+                #    if is_percentage:
+                #        aux_dict[key] =  replaced_string + '%'
+                #    else:
+                #        aux_dict[key] = replaced_string
+            aux_dict['ticker'] = ticker
+            aux_list.append(aux_dict)
+        return aux_list
