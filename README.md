@@ -40,8 +40,6 @@ pip install -r requirements.txt
 
 O arquivo `main.py` retorna uma lista com os ativos que respeitam as condições estabelecidas nos filtros. 
 
-Os dados utilizados para seleção de ativos
-
 ## Construído com
 
 * [support](https://github.com/TuringQuant/support) - Repositório do TuringQuant para obter dados
@@ -53,4 +51,4 @@ Os dados utilizados para seleção de ativos
 
 ## Autores
 
-* **Guilherme Fernandes** - *Versão Incial* - [aateg](https://github.com/aateg)
+* **Guilherme Fernandes** - *Versão Inicial* - [aateg](https://github.com/aateg)
