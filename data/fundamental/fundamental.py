@@ -52,20 +52,16 @@ class Fundamentus:
             aux_dict = {}    
             for key in ticker_data:
                 string = ticker_data[key]
-                #is_percentage = True if '%' in string else False
-                replaced_string = string.replace(',','.').replace('\n', '')#.replace('%', '')
-                aux_dict[key] = replaced_string
-                #try:
-                #    if replaced_string:
-                #        if is_percentage:
-                #            aux_dict[key] =  float(replaced_string) / 100
-                #        else:
-                #            aux_dict[key] =  float(replaced_string)
-                #except:
-                #    if is_percentage:
-                #        aux_dict[key] =  replaced_string + '%'
-                #    else:
-                #        aux_dict[key] = replaced_string
+                is_percentage = True if '%' in string else False
+                replaced_string = string.replace(',','.') \
+                    .replace('\n', '').replace('%', '').replace(' ', '')
+                if replaced_string != '-':
+                    if is_percentage:
+                        aux_dict[key] =  float(replaced_string) / 100
+                    else:
+                        aux_dict[key] =  float(replaced_string)
+                else:
+                    aux_dict[key] = 0.0
             aux_dict['ticker'] = ticker
             aux_list.append(aux_dict)
         return aux_list
