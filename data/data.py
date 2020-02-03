@@ -1,8 +1,7 @@
-import json
-from data.fundamental import Fundamentus
-from tickers.tickers import get_tickers
-from tickers.info import get_info
 import pandas as pd
+from data.fundamental.fundamental import Fundamentus
+from data.tickers.tickers import get_tickers
+from data.tickers.info import get_info
 
 def tickers_to_csv():
     """
@@ -10,7 +9,7 @@ def tickers_to_csv():
     """
     tickers =  get_tickers()
     s_tickers = pd.Series(tickers)
-    s_tickers.to_csv('./data/tickers.csv', index=False, header=False)
+    s_tickers.to_csv('./data/csv/tickers.csv', index=False, header=False)
 
     return None
 
@@ -18,7 +17,7 @@ def info_to_csv():
     """
     Cria csv com dados dos setores dos tickers das empresas listadas na B3
     """
-    tickers =  pd.read_csv('./data/tickers.csv')
+    tickers =  pd.read_csv('./data/csv/tickers.csv')
     info = get_info()
     aux_list = []
     for ticker in tickers:
@@ -33,8 +32,8 @@ def info_to_csv():
         aux_dict['segmento'] = info_ticker[2]
         aux_list.append(aux_dict)
 
-    df_info_tickers = pd.DataFrame(json.dumps(aux_list))
-    df_info_tickers.to_csv('./data/info_tickers.csv', index=False)
+    df_info_tickers = pd.DataFrame(aux_list)
+    df_info_tickers.to_csv('./data/csv/info_tickers.csv', index=False)
 
     return None
 
@@ -43,7 +42,7 @@ def fundamental_to_csv():
     Cria csv com dados fundamentalistas dos tickers das empresas listadas na B3.
     Usando o site fundamentus.com.br
     """
-    tickers = pd.read_csv('./data/tickers.csv', header=None)[0]
+    tickers = pd.read_csv('./data/csv/tickers.csv', header=None)[0]
     #info = pd.read_csv('./data/info_tickers.csv')
 
     f = Fundamentus(list(tickers))
@@ -51,6 +50,6 @@ def fundamental_to_csv():
 
     df = pd.DataFrame(f.data)
 
-    df.to_csv('./data/fundamental.csv', index=False)
+    df.to_csv('./data/csv/fundamental.csv', index=False)
 
     return None
