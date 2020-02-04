@@ -5,21 +5,14 @@ class Fundamentus:
 
     base_url = 'https://www.fundamentus.com.br/detalhes.php?papel='
 
-    def __init__(self, tickers):
+    def __init__(self, tickers: list):
 
-        if isinstance(tickers, list):
-            self.tickers = tickers
-        elif isinstance(tickers, str):
-            self.tickers = [].append(tickers)
-        else:
-            self.tickers = []
-
+        self.tickers = tickers
         self.data = []
 
     def get(self):
 
         fundamental = []
-
         for ticker in self.tickers:
             
             print(f'Requisitando dados {ticker} ...')
@@ -27,41 +20,42 @@ class Fundamentus:
             try:
                 url = self.base_url + ticker
                 response = requests.get(url)
+
+                soup = BeautifulSoup(response.content, 'html.parser')
+
+                alltables = soup.find_all('table', 'w728')
+                t = alltables[2]
+
+                label = t.find_all('td', {'class': 'label'})
+                content = t.find_all('td', {'class': 'data'})
             except:
                 print(f'Não foi possível obter dados de {ticker}')
                 continue
 
-            soup = BeautifulSoup(response.content, 'html.parser')
+            #print(f'Convertendo dados de {ticker} ...')
+            ticker_data = {}
+            for l, c in zip(label, content):
+                data_label = l.find('span', {'class': 'txt'}).getText()
+                data_content = c.getText()
+                if self.fix_string(data_label):
+                    ticker_data[data_label] = self.string_to_float(data_content)
+            ticker_data['ticker'] = ticker
 
-            alltables = soup.find_all('table', 'w728')
-            t = alltables[2]
+            fundamental.append(ticker_data)
 
-            label = t.find_all('td', {'class': 'label'})
-            content = t.find_all('td', {'class': 'data'})
-
-            fundamental.append(
-                {l.find('span', {'class': 'txt'}).getText(): c.getText() for l, c in zip(label, content)}
-            )
-        
-        self.data = Fundamentus.fix(fundamental, self.tickers)
+        self.data = fundamental
 
     @staticmethod
-    def fix(json, tickers):
-        aux_list = []
-        for ticker_data, ticker in zip(json, tickers):
-            aux_dict = {}    
-            for key in ticker_data:
-                string = ticker_data[key]
-                is_percentage = True if '%' in string else False
-                replaced_string = string.replace(',','.') \
-                    .replace('\n', '').replace('%', '').replace(' ', '')
-                if replaced_string != '-':
-                    if is_percentage:
-                        aux_dict[key] =  float(replaced_string) / 100
-                    else:
-                        aux_dict[key] =  float(replaced_string)
-                else:
-                    aux_dict[key] = 0.0
-            aux_dict['ticker'] = ticker
-            aux_list.append(aux_dict)
-        return aux_list
+    def string_to_float(string):
+        is_percentage = True if '%' in string else False
+        replaced_string = string.replace('\n', '') \
+            .replace('%', '').replace(' ', '').replace('.', '').replace(',', '.')
+        if replaced_string == '-':
+            return 0.0
+        if is_percentage:
+            return float(replaced_string) / 100
+        return float(replaced_string)
+
+    @staticmethod
+    def fix_string(string):
+        return string.replace(' ', '').replace('\n', '')
