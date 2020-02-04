@@ -25,19 +25,19 @@ def main():
     info = pd.read_csv('./data/csv/info_tickers.csv')
     fundamental = pd.read_csv('./data/csv/fundamental.csv')
 
-    df_final = pd.merge(fundamental, info, how='inner', on='ticker')
+    df_merged = pd.merge(fundamental, info, how='inner', on='ticker')
 
-    df = df_final[['ticker', 'ROE', 'ROIC', 'P/L', 'EV / EBIT', 'setor']]
+    df = df_merged[['ticker', 'ROE', 'ROIC', 'P/L', 'EV / EBIT', 'setor']]
 
-    agg_roe_roic = df[['setor', 'ROE', 'ROIC']].groupby(['setor']).mean()
+    agg_roe_roic = df[['setor', 'ROE', 'ROIC']].groupby('setor').mean()
 
-    #TODO resolver problema da conversão pra float do fundamental
     #TODO criar flags de roe maior que a media
     #TODO criar flag de roic maior que a media
     #TODO filtrar por p/l < 15
     #TODO encontrar endividamento liquido / ebit e filtrar por menor que 3
     
-    #df['roe_mt_avg'] = df['setor'].apply(lambda setor: 1 if )
+    #df['avg_roe'] = df.index.apply(lambda index: agg_roe_roic.loc[df.iloc[index]['setor']]['ROE'])
+    #df['avg_roic'] = df.apply(lambda x: x['setor']agg_roe_roic.loc[x['setor']]['ROIC'])
     
     return None
 
