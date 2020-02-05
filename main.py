@@ -42,6 +42,8 @@ def main():
     #TODO encontrar endividamento liquido / ebit e filtrar por menor que 3
 
     df_filtered = df2[df2['roe_mt_avg'] & df2['roic_mt_avg'] & df2['pl_lt_15']]
+
+    df_filtered.sort_values(by='ticker').to_csv('./data/files/filtered_data.csv', index=False)
     
     return None
 
