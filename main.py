@@ -30,14 +30,18 @@ def main():
     df = df_merged[['ticker', 'ROE', 'ROIC', 'P/L', 'EV / EBIT', 'setor']]
 
     agg_roe_roic = df[['setor', 'ROE', 'ROIC']].groupby('setor').mean()
+    agg_roe_roic.columns = ['mean_roe', 'mean_roic']
 
-    #TODO criar flags de roe maior que a media
-    #TODO criar flag de roic maior que a media
-    #TODO filtrar por p/l < 15
+    df2 = pd.merge(df, agg_roe_roic, how='inner', on='setor')
+
+    df2['roe_mt_avg'] = df2['ROE'] > df2['mean_roe']
+    df2['roic_mt_avg'] = df2['ROIC'] > df2['mean_roic']
+
+    df2['pl_lt_15'] = df2['P/L'] < 15
+
     #TODO encontrar endividamento liquido / ebit e filtrar por menor que 3
-    
-    #df['avg_roe'] = df.index.apply(lambda index: agg_roe_roic.loc[df.iloc[index]['setor']]['ROE'])
-    #df['avg_roic'] = df.apply(lambda x: x['setor']agg_roe_roic.loc[x['setor']]['ROIC'])
+
+    df_filtered = df2[df2['roe_mt_avg'] & df2['roic_mt_avg'] & df2['pl_lt_15']]
     
     return None
 
