@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+#TODO ajustar get para pegar balanço
+
 class Fundamentus:
 
     base_url = 'https://www.fundamentus.com.br/detalhes.php?papel='
@@ -10,9 +12,15 @@ class Fundamentus:
         self.tickers = tickers
         self.data = []
 
-    def get(self):
+    def get(self, table='fundamentalista'):
 
-        fundamental = []
+        table_index = {
+            'fundamentalista': 2,
+            'balanco': 3,
+            'demonstrativo': 4
+        }
+
+        f = []
         for ticker in self.tickers:
             
             print(f'Requisitando dados {ticker} ...')
@@ -24,15 +32,13 @@ class Fundamentus:
                 soup = BeautifulSoup(response.content, 'html.parser')
 
                 alltables = soup.find_all('table', 'w728')
-                t = alltables[2]
+                t = alltables[table_index[table]]
 
                 label = t.find_all('td', {'class': 'label'})
                 content = t.find_all('td', {'class': 'data'})
             except:
-                print(f'Não foi possível obter dados de {ticker}')
                 continue
 
-            #print(f'Convertendo dados de {ticker} ...')
             ticker_data = {}
             for l, c in zip(label, content):
                 data_label = l.find('span', {'class': 'txt'}).getText()
@@ -41,9 +47,9 @@ class Fundamentus:
                     ticker_data[data_label] = self.string_to_float(data_content)
             ticker_data['ticker'] = ticker
 
-            fundamental.append(ticker_data)
+            f.append(ticker_data)
 
-        self.data = fundamental
+        self.data = f
 
     @staticmethod
     def string_to_float(string):

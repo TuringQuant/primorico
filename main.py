@@ -1,19 +1,19 @@
 import json
 import os.path
-from data.data import (fundamental_to_csv, tickers_to_csv, info_to_csv)
+from data.create import (fundamental_to_csv, tickers_to_csv, info_to_csv)
 import pandas as pd
 
 def get_data():
 
-    if os.path.isfile('./data/csv/tickers.csv'):
+    if os.path.isfile('./data/files/tickers.csv'):
         pass
     else:
         tickers_to_csv()
-    if os.path.isfile('./data/csv/info_tickers.csv'):
+    if os.path.isfile('./data/files/info_tickers.csv'):
         pass
     else:
         info_to_csv()
-    if os.path.isfile('./data/csv/fundamental.csv'):
+    if os.path.isfile('./data/files/fundamental.csv'):
         pass
     else:
         info_to_csv()
@@ -22,8 +22,8 @@ def get_data():
 def main():
     get_data()
 
-    info = pd.read_csv('./data/csv/info_tickers.csv')
-    fundamental = pd.read_csv('./data/csv/fundamental.csv')
+    info = pd.read_csv('./data/files/info_tickers.csv')
+    fundamental = pd.read_csv('./data/files/fundamental.csv')
 
     df_merged = pd.merge(fundamental, info, how='inner', on='ticker')
 
